@@ -1,0 +1,23 @@
+ __pycache__/
+ *.pyc
+ *.pyo
+ *.pyd
+ .Python
+ *.ipynb_checkpoints/
+
+ # Conda
+ .conda/
+ *.egg-info/
+ build/
+ dist/
+
+ # Project-specific
+ memory/memory.db
+ outputs/*
+ *.pdf
+ demo.mp4
+
+ # Environment
+ .env
+ venv/
+ env/
