@@ -1,0 +1,12 @@
+{
+    "thread_id": "81c73edf-567e-4dfe-9d29-7257ca5c6a95",
+    "format": "JSON",
+    "intent": "Complaint",
+    "extracted_fields": {
+        "invoice_number": "INV123",
+        "amount": 5000.0,
+        "date": "2025-05-29",
+        "sender": "vendor@example.com"
+    },
+    "anomalies": []
+}

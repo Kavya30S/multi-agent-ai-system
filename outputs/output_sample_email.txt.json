@@ -1,0 +1,11 @@
+{
+    "thread_id": "64232ec8-87a2-4894-9b11-c568bbe25b72",
+    "format": "Email",
+    "intent": "RFQ",
+    "extracted_fields": {
+        "sender": "customer@example.com",
+        "subject": "Request for Quotation",
+        "urgency": "High",
+        "intent": "RFQ"
+    }
+}

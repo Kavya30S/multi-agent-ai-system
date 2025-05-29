@@ -1,0 +1,11 @@
+{
+    "thread_id": "a67d193a-9e5a-44a0-a346-f81b491f8f3a",
+    "format": "Email",
+    "intent": "Complaint",
+    "extracted_fields": {
+        "sender": "unhappy@customer.com",
+        "subject": "Complaint About Delayed Shipment",
+        "urgency": "High",
+        "intent": "Complaint"
+    }
+}

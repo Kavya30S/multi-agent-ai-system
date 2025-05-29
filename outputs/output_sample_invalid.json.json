@@ -1,0 +1,13 @@
+{
+    "thread_id": "87c8d4f3-dc83-408d-8fba-41afd7881835",
+    "format": "JSON",
+    "intent": "Complaint",
+    "extracted_fields": {
+        "invoice_number": "INV789",
+        "date": "2025-05-30"
+    },
+    "anomalies": [
+        "Invalid type for amount: expected <class 'float'>, got <class 'str'>",
+        "Missing field: sender"
+    ]
+}
