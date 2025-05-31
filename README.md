@@ -1,274 +1,294 @@
-Multi-Agent AI System (Streamlit)
-This project is a Streamlit-based multi-agent AI system designed to process uploaded files (.txt, .json, .pdf), classify their format (Email, JSON, PDF) and intent (Invoice, RFQ, Complaint, Regulation), and extract relevant fields. It uses a local BERT model (distilbert-base-uncased-finetuned-sst-2-english) with a keyword-based heuristic for intent classification, ensuring no external API dependency. The system employs a modular agent architecture, stores results in a SQLite database (memory/memory.db), and saves outputs as JSON files in outputs/. The application is hosted locally via Streamlit and synced with GitHub for version control.
-GitHub Repository: github.com/Kavya30S/multi-agent-ai-system
-Table of Contents
+# Multi-Agent AI System (Streamlit)
 
-Project Overview
-Folder Structure
-Expected Outputs
-Step-by-Step Working
-Troubleshooting
-Notes
+This project is a Streamlit-based multi-agent AI system that processes uploaded files (`.txt`, `.json`, `.pdf`), classifies their format (`Email`, `JSON`, `PDF`) and intent (`Invoice`, `RFQ`, `Complaint`, `Regulation`), and extracts relevant fields. It uses a local BERT model (`distilbert-base-uncased-finetuned-sst-2-english`) with a keyword-based heuristic for intent classification, requiring no external API. Results are stored in a SQLite database (`memory/memory.db`) and as JSON files in `outputs/`. The app runs locally via Streamlit and is synced with GitHub.
 
-Project Overview
-This system processes various file types, classifies their format and intent, and extracts relevant fields using a modular agent-based architecture.
-Key Features
+**GitHub Repository**: github.com/Kavya30S/multi-agent-ai-system
 
-Text Files (.txt): Treated as emails, extracting sender, subject, urgency, and intent using BERT and regex.
-JSON Files (.json): Validates and extracts fields like invoice_number, amount, date, sender.
-PDF Files (.pdf): Extracts fields using regex after text extraction with pdfplumber.
-Intent Classification: Uses a local BERT model with a heuristic prioritizing keywords (e.g., “quote” for RFQ, “invoice” for Invoice).
-Storage: Results are stored in memory/memory.db (SQLite) and outputs/ (JSON).
-Interface: Streamlit app at http://localhost:8501 for file uploads and result display.
+## **Table of Contents**
 
-Folder Structure
-Below is the project’s directory structure with descriptions of each file and folder.
-Directory Details
+- Project Overview
+- Folder Structure
+- Expected Outputs
+- Step-by-Step Working
+- Troubleshooting
+
+## **Project Overview**
+
+The system handles different file types, identifies their format and purpose, and pulls out key information using specialized agents.
+
+### *Key Features*
+
+- **Text Files (**`.txt`**)**: Treated as emails, extracting `sender`, `subject`, `urgency`, and intent.
+- **JSON Files (**`.json`**)**: Extracts fields like `invoice_number`, `amount`, `date`, `sender`.
+- **PDF Files (**`.pdf`**)**: Extracts fields using text extraction.
+- **Intent Classification**: Uses a local BERT model with keywords (e.g., “quote” for `RFQ`).
+- **Storage**: Saves results in `memory/memory.db` and `outputs/`.
+- **Interface**: Streamlit app at `http://localhost:8501`.
+
+## **Folder Structure**
+
+The project is organized as follows.
+
+### *Directory Details*
+
+```
 multi-agent-ai-system/
 ├── agents/
-│   ├── __init__.py               # Empty file to make agents a package
-│   ├── classifier_agent.py       # Classifies format and intent using BERT
-│   ├── email_agent.py            # Processes emails, extracts fields
-│   ├── json_agent.py             # Processes JSON files, validates fields
-│   ├── memory_manager.py         # Manages SQLite database storage
-│   ├── pdf_agent.py              # Processes PDFs, extracts fields
+│   ├── __init__.py           # Makes agents a package
+│   ├── classifier_agent.py   # Classifies format and intent
+│   ├── email_agent.py        # Processes emails
+│   ├── json_agent.py         # Processes JSON files
+│   ├── memory_manager.py     # Manages SQLite database
+│   ├── pdf_agent.py          # Processes PDFs
 ├── inputs/
-│   ├── sample_email.txt          # Sample email for testing (RFQ)
-│   ├── sample_rfq.json           # Sample JSON for testing (Invoice)
-│   ├── sample_invoice.pdf        # Sample PDF for testing (Invoice)
-├── outputs/                      # Directory for JSON output files
+│   ├── sample_email.txt      # Sample email (RFQ)
+│   ├── sample_rfq.json       # Sample JSON (Invoice)
+│   ├── sample_invoice.pdf    # Sample PDF (Invoice)
+├── outputs/                  # Stores JSON output files
 ├── memory/
-│   └── memory.db                 # SQLite database for storing results
-├── .gitignore                    # Excludes .env, memory.db, outputs/, etc.
-├── app.py                        # Streamlit app for file upload and processing
-├── requirements.txt              # Python dependencies
-├── test_classifier.py            # Test script for ClassifierAgent
-├── test_email_agent.py           # Test script for EmailAgent
-├── test_json_agent.py            # Test script for JSONAgent
-├── test_pdf_agent.py             # Test script for PDFAgent
-├── README.md                     # Project documentation
-├── demo/                         # (Optional) Directory for demo video
-│   └── demo.mp4                  # Demo video of project
+│   └── memory.db             # SQLite database
+├── .gitignore                # Excludes memory.db, outputs/, etc.
+├── app.py                    # Streamlit app
+├── requirements.txt          # Dependencies
+├── test_classifier.py        # Tests ClassifierAgent
+├── test_email_agent.py       # Tests EmailAgent
+├── test_json_agent.py        # Tests JSONAgent
+├── test_pdf_agent.py         # Tests PDFAgent
+├── README.md                 # Project documentation
+├── demo/                     # (Optional) Demo video
+│   └── demo.mp4
+```
 
-Expected Outputs
-Below are the expected results when processing the sample files via the Streamlit app or test scripts.
-sample_email.txt
-Content:
+## **Expected Outputs**
+
+Results for sample files when processed via Streamlit or test scripts.
+
+### *sample_email.txt*
+
+**Content**:
+
+```
 From: customer@example.com
 Subject: Request for Quotation
 Hi, please provide a quote for 100 units of Product X. This is urgent.
+```
 
-Output:
+**Output**:
+
+```
 File: sample_email.txt
 Format: Email
 Intent: RFQ
 Extracted Fields: {"sender": "customer@example.com", "subject": "Request for Quotation", "urgency": "High", "intent": "RFQ"}
 Output saved to: outputs/output_sample_email.txt.json
+```
 
-sample_rfq.json
-Content:
+### *sample_rfq.json*
+
+**Content**:
+
+```
 {
     "invoice_number": "INV123",
     "amount": 5000.0,
-    "date": "2025-05-29",
+    "date": "2025-05-31",
     "sender": "vendor@example.com"
 }
+```
 
-Output:
+**Output**:
+
+```
 File: sample_rfq.json
 Format: JSON
 Intent: Invoice
-Extracted Fields: {"invoice_number": "INV123", "amount": 5000.0, "date": "2025-05-29", "sender": "vendor@example.com"}
+Extracted Fields: {"invoice_number": "INV123", "amount": 5000.0, "date": "2025-05-31", "sender": "vendor@example.com"}
 Output saved to: outputs/output_sample_rfq.json
+```
 
-sample_invoice.pdf
-Content:
+### *sample_invoice.pdf*
+
+**Content**:
+
+```
 Invoice #INV456
 Amount: $10,000
-Date: 2025-05-29
+Date: 2025-05-31
 From: supplier@example.com
+```
 
-Output:
+**Output**:
+
+```
 File: sample_invoice.pdf
 Format: PDF
 Intent: Invoice
-Extracted Fields: {"invoice_number": "INV456", "amount": 10000.0, "date": "2025-05-29", "sender": "supplier@example.com"}
+Extracted Fields: {"invoice_number": "INV456", "amount": 10000.0, "date": "2025-05-31", "sender": "supplier@example.com"}
 Output saved to: outputs/output_sample_invoice.pdf.json
+```
 
-Step-by-Step Working
-Follow these steps to set up and run the project on your local machine.
-Prerequisites
+## **Step-by-Step Working**
 
-Anaconda: Installed at C:\Users\THINKPAD\anaconda3.
-VS Code: With Python extension for editing and debugging.
-Git: For cloning and version control.
-Python 3.10: Included in the multi_agent_system Conda environment.
-Hardware: Windows PC (e.g., ThinkPAD) with sufficient memory for BERT model inference.
+Steps to set up and run the project.
 
-Step 1: Clone the Repository
+### *Prerequisites*
 
-Open Anaconda Prompt.
-Navigate to your documents directory:cd C:\Users\THINKPAD\Documents
+- Anaconda at `C:\Users\THINKPAD\anaconda3`.
+- VS Code with Python extension.
+- Git for version control.
+- Python 3.10 in `multi_agent_system` Conda environment.
 
+### *Step 1: Clone the Repository*
 
-Clone the repository:git clone https://github.com/Kavya30S/multi-agent-ai-system.git
+1. Open Anaconda Prompt.
 
+2. Navigate to:
 
-Enter the project directory:cd multi-agent-ai-system
+   ```
+   cd C:\Users\THINKPAD\Documents
+   ```
 
-Expected Output: Repository is cloned, and you’re in the project folder.
+3. Clone:
 
-Step 2: Set Up Conda Environment
+   ```
+   git clone https://github.com/Kavya30S/multi-agent-ai-system.git
+   ```
 
-Activate the Conda environment:conda activate multi_agent_system
+4. Enter directory:
 
-Expected Output: Prompt shows (multi_agent_system).
-Install dependencies:pip install -r requirements.txt
+   ```
+   cd multi-agent-ai-system
+   ```
 
-Expected Output:Successfully installed streamlit-1.31.0 pdfplumber-0.11.4 transformers-4.44.2 torch-2.4.1
+### *Step 2: Set Up Conda Environment*
 
+1. Activate environment:
 
+   ```
+   conda activate multi_agent_system
+   ```
 
-Step 3: Verify Input Files
-Ensure the inputs/ directory contains:
+2. Install dependencies:
 
-sample_email.txt:From: customer@example.com
-Subject: Request for Quotation
-Hi, please provide a quote for 100 units of Product X. This is urgent.
+   ```
+   pip install -r requirements.txt
+   ```
 
+### *Step 3: Verify Input Files*
 
-sample_rfq.json:{
-    "invoice_number": "INV123",
-    "amount": 5000.0,
-    "date": "2025-05-29",
-    "sender": "vendor@example.com"
-}
+Ensure `inputs/` contains:
 
+- `sample_email.txt`
+- `sample_rfq.json`
+- `sample_invoice.pdf`
 
-sample_invoice.pdf with text:Invoice #INV456
-Amount: $10,000
-Date: 2025-05-29
-From: supplier@example.com
+### *Step 4: Run Test Scripts*
 
+1. ClassifierAgent:
 
+   ```
+   python test_classifier.py
+   ```
 
-Expected Output: Files are present in inputs/. Create sample_invoice.pdf manually (e.g., using a text editor and saving as PDF) if missing.
-Step 4: Run Test Scripts
-Test each agent to verify functionality:
+2. EmailAgent:
 
-Test ClassifierAgent:python test_classifier.py
+   ```
+   python test_email_agent.py
+   ```
 
-Expected Output:Classifier Test Result: {'thread_id': '<uuid>', 'format': 'Email', 'intent': 'RFQ', 'text_content': 'From: customer@example.com\nSubject: Request for Quotation\nHi, please provide a quote for 100 units of Product X. This is urgent.'}
+3. JSONAgent:
 
+   ```
+   python test_json_agent.py
+   ```
 
-Test EmailAgent:python test_email_agent.py
+4. PDFAgent:
 
-Expected Output:Email Agent Test Result: {'thread_id': 'test-thread-email', 'extracted_fields': {'sender': 'customer@example.com', 'subject': 'Request for Quotation', 'urgency': 'High', 'intent': 'RFQ'}}
+   ```
+   python test_pdf_agent.py
+   ```
 
+### *Step 5: Run Streamlit App*
 
-Test JSONAgent:python test_json_agent.py
+1. Launch:
 
-Expected Output:JSON Agent Test Result: {'thread_id': 'test-thread-json', 'extracted_fields': {'invoice_number': 'INV123', 'amount': 5000.0, 'date': '2025-05-29', 'sender': 'vendor@example.com'}, 'anomalies': []}
+   ```
+   streamlit run app.py
+   ```
 
+2. Open `http://localhost:8501`.
 
-Test PDFAgent:python test_pdf_agent.py
+3. Upload sample files and check results.
 
-Expected Output:PDF Agent Test Result: {'thread_id': 'test-thread-pdf', 'extracted_fields': {'invoice_number': 'INV456', 'amount': 10000.0, 'date': '2025-05-29', 'sender': 'supplier@example.com'}, 'anomalies': []}
+### *Step 6: Verify Outputs*
 
+1. Check `outputs/`:
 
+   ```
+   dir outputs
+   ```
 
-Step 5: Run Streamlit App
+2. Inspect `memory/memory.db` with DB Browser for SQLite.
 
-Launch the Streamlit app:streamlit run app.py
+### *Step 7: Record Demo (Optional)*
 
-Expected Output: Browser opens at http://localhost:8501.
-Upload sample files:
-Navigate to http://localhost:8501.
-Use the file uploader to select sample_email.txt, sample_rfq.json, and sample_invoice.pdf.
+1. Use OBS Studio to record VS Code, Anaconda Prompt, browser, and File Explorer.
 
+2. Save and push:
 
-Verify results:
-Results are displayed on the webpage (see Expected Outputs above).
-JSON files are saved in outputs/ (e.g., output_sample_email.txt.json).
-Database entries are added to memory/memory.db.
+   ```
+   mkdir demo
+   move path_to_recording.mp4 demo/demo.mp4
+   git add demo/demo.mp4
+   git commit -m "Added demo video"
+   git push origin main
+   ```
 
+### *Step 8: Push to GitHub*
 
+1. Commit changes:
 
-Step 6: Verify Outputs
+   ```
+   git add .
+   git commit -m "Updated README formatting"
+   git push origin main
+   ```
 
-Check outputs/ for JSON files:dir outputs
+## **Troubleshooting**
 
-Expected Output: Files like output_sample_email.txt.json, output_sample_rfq.json, output_sample_invoice.pdf.json.
-Inspect memory/memory.db using DB Browser for SQLite:
-Open memory/memory.db.
-Check the context table for entries with format, intent, and context_data.Expected Output: Entries for each processed file with corresponding fields.
+Solutions for common issues.
 
+### *Dependency Issues*
 
+- Check:
 
-Step 7: Record Demo (Optional)
+  ```
+  pip show streamlit pdfplumber transformers torch
+  ```
 
-Use OBS Studio to record:
-VS Code showing project files.
-Anaconda Prompt running test scripts.
-Browser at http://localhost:8501 with file uploads and results.
-File Explorer showing outputs/ and memory/memory.db.
+- Reinstall:
 
+  ```
+  pip install -r requirements.txt
+  ```
 
-Save the video:mkdir demo
-move path_to_recording.mp4 demo/demo.mp4
+### *PDF Processing Errors*
 
+- Verify `pdfplumber`.
+- Ensure `sample_invoice.pdf` has text.
 
-Push to GitHub:git add demo/demo.mp4
-git commit -m "Added demo video"
-git push origin main
+### *Intent Misclassification*
 
-Expected Output: Video is uploaded to https://github.com/Kavya30S/multi-agent-ai-system.
+- Check `sample_email.txt` for “quote”.
+- Update heuristics in `classifier_agent.py` or `email_agent.py`.
 
-Step 8: Push to GitHub
+### *Database Issues*
 
-Commit any changes:git add .
-git commit -m "Updated project with formatted README"
-git push origin main
+- Check `memory/` permissions.
+- Delete `memory.db` to recreate.
 
-Expected Output: Changes are pushed to the repository.
+### *Streamlit Issues*
 
-Troubleshooting
-Below are solutions to common issues.
-Dependency Issues
+- Ensure port 8501 is free:
 
-Verify installed packages:pip show streamlit pdfplumber transformers torch
-
-
-Reinstall if needed:pip install -r requirements.txt
-
-
-
-PDF Processing Errors
-
-Ensure pdfplumber is installed.
-Verify sample_invoice.pdf contains text (not an image-based PDF).
-
-Intent Misclassification
-
-Check sample_email.txt for keywords like “quote” or “quotation”.
-Update classifier_agent.py or email_agent.py heuristics if needed.
-
-Database Issues
-
-Ensure memory/ has write permissions:dir memory
-
-
-Delete memory.db and rerun tests/app to recreate.
-
-Streamlit Issues
-
-Verify port 8501 is free:netstat -a -n | find "8501"
-
-
-Restart the app if needed.
-
-Notes
-
-The BERT model (distilbert-base-uncased-finetuned-sst-2-english) uses sentiment analysis with a heuristic for intent classification. For higher accuracy, fine-tuning on a custom dataset would be ideal but is beyond the current scope.
-The project is designed to run offline, requiring no API keys, making it suitable for local deployment.
-
+  # 
