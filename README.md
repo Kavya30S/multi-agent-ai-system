@@ -1,8 +1,18 @@
 Multi-Agent AI System (Streamlit)
-
 This project is a Streamlit-based multi-agent AI system designed to process uploaded files (.txt, .json, .pdf), classify their format (Email, JSON, PDF) and intent (Invoice, RFQ, Complaint, Regulation), and extract relevant fields. It uses a local BERT model (distilbert-base-uncased-finetuned-sst-2-english) with a keyword-based heuristic for intent classification, ensuring no external API dependency. The system employs a modular agent architecture, stores results in a SQLite database (memory/memory.db), and saves outputs as JSON files in outputs/. The application is hosted locally via Streamlit and synced with GitHub for version control.
 GitHub Repository: github.com/Kavya30S/multi-agent-ai-system
+Table of Contents
+
 Project Overview
+Folder Structure
+Expected Outputs
+Step-by-Step Working
+Troubleshooting
+Notes
+
+Project Overview
+This system processes various file types, classifies their format and intent, and extracts relevant fields using a modular agent-based architecture.
+Key Features
 
 Text Files (.txt): Treated as emails, extracting sender, subject, urgency, and intent using BERT and regex.
 JSON Files (.json): Validates and extracts fields like invoice_number, amount, date, sender.
@@ -12,6 +22,8 @@ Storage: Results are stored in memory/memory.db (SQLite) and outputs/ (JSON).
 Interface: Streamlit app at http://localhost:8501 for file uploads and result display.
 
 Folder Structure
+Below is the project’s directory structure with descriptions of each file and folder.
+Directory Details
 multi-agent-ai-system/
 ├── agents/
 │   ├── __init__.py               # Empty file to make agents a package
@@ -38,7 +50,7 @@ multi-agent-ai-system/
 ├── demo/                         # (Optional) Directory for demo video
 │   └── demo.mp4                  # Demo video of project
 
-##Expected Outputs
+Expected Outputs
 Below are the expected results when processing the sample files via the Streamlit app or test scripts.
 sample_email.txt
 Content:
@@ -46,7 +58,7 @@ From: customer@example.com
 Subject: Request for Quotation
 Hi, please provide a quote for 100 units of Product X. This is urgent.
 
-*Output:
+Output:
 File: sample_email.txt
 Format: Email
 Intent: RFQ
@@ -62,7 +74,7 @@ Content:
     "sender": "vendor@example.com"
 }
 
-*Output:
+Output:
 File: sample_rfq.json
 Format: JSON
 Intent: Invoice
@@ -76,14 +88,14 @@ Amount: $10,000
 Date: 2025-05-29
 From: supplier@example.com
 
-*Output:
+Output:
 File: sample_invoice.pdf
 Format: PDF
 Intent: Invoice
 Extracted Fields: {"invoice_number": "INV456", "amount": 10000.0, "date": "2025-05-29", "sender": "supplier@example.com"}
 Output saved to: outputs/output_sample_invoice.pdf.json
 
-##Step-by-Step Working
+Step-by-Step Working
 Follow these steps to set up and run the project on your local machine.
 Prerequisites
 
@@ -215,14 +227,15 @@ Expected Output: Video is uploaded to https://github.com/Kavya30S/multi-agent-ai
 Step 8: Push to GitHub
 
 Commit any changes:git add .
-git commit -m "Updated project with refined intent classification and README"
+git commit -m "Updated project with formatted README"
 git push origin main
 
 Expected Output: Changes are pushed to the repository.
 
 Troubleshooting
+Below are solutions to common issues.
+Dependency Issues
 
-Dependency Issues:
 Verify installed packages:pip show streamlit pdfplumber transformers torch
 
 
@@ -230,31 +243,29 @@ Reinstall if needed:pip install -r requirements.txt
 
 
 
+PDF Processing Errors
 
-PDF Processing Errors:
 Ensure pdfplumber is installed.
 Verify sample_invoice.pdf contains text (not an image-based PDF).
 
+Intent Misclassification
 
-Intent Misclassification:
 Check sample_email.txt for keywords like “quote” or “quotation”.
 Update classifier_agent.py or email_agent.py heuristics if needed.
 
+Database Issues
 
-Database Issues:
 Ensure memory/ has write permissions:dir memory
 
 
 Delete memory.db and rerun tests/app to recreate.
 
+Streamlit Issues
 
-Streamlit Issues:
 Verify port 8501 is free:netstat -a -n | find "8501"
 
 
 Restart the app if needed.
-
-
 
 Notes
 
