@@ -1,57 +1,53 @@
-import pdfplumber
 import json
-import re
+import uuid
+import warnings
 from transformers import pipeline
 from agents.memory_manager import MemoryManager
+
+# Suppress FutureWarning for clean_up_tokenization_spaces
+warnings.filterwarnings("ignore", category=FutureWarning, module="transformers.tokenization_utils_base")
 
 class ClassifierAgent:
     def __init__(self):
         self.memory = MemoryManager()
-        self.nlp = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english")
+        self.classifier = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
         self.intents = ["Invoice", "RFQ", "Complaint", "Regulation"]
 
-    def classify_format(self, input_data):
-        """Classify input format as PDF, JSON, or Email."""
-        if isinstance(input_data, str):
-            try:
-                json.loads(input_data)
-                return "JSON"
-            except ValueError:
-                if re.match(r".*From:.*Subject:.*", input_data, re.DOTALL):
-                    return "Email"
-        elif isinstance(input_data, bytes) or hasattr(input_data, "read"):
-            return "PDF"
+    def classify_format(self, content):
+        """Classify the format of the input content."""
+        try:
+            json.loads(content)
+            return "JSON"
+        except ValueError:
+            if "From:" in content and "Subject:" in content:
+                return "Email"
         return "Unknown"
 
-    def classify_intent(self, text):
-        """Classify intent using LLM."""
-        result = self.nlp(text[:512])[0]  # Limit to 512 tokens
-        # Map sentiment to intents (simplified for demo; fine-tune for real use)
-        intent_map = {"POSITIVE": "RFQ", "NEGATIVE": "Complaint"}
-        intent = intent_map.get(result["label"], "Invoice")
-        return intent
+    def classify_intent(self, content):
+        """Classify the intent using BERT with refined heuristic."""
+        content_lower = content.lower()
+        result = self.classifier(content[:512])[0]  # Limit to 512 tokens
+        label = result["label"]
 
-    def process_input(self, input_data):
-        """Process input, classify, and route to appropriate agent."""
-        format_type = self.classify_format(input_data)
-        text_content = ""
+        # Refined heuristic
+        if "quote" in content_lower or "quotation" in content_lower:
+            return "RFQ"
+        elif "invoice" in content_lower or "amount" in content_lower:
+            return "Invoice"
+        elif label == "NEGATIVE":
+            return "Complaint"
+        return "Regulation"
 
-        if format_type == "PDF":
-            with pdfplumber.open(input_data) as pdf:
-                text_content = "".join(page.extract_text() or "" for page in pdf.pages)
-        elif format_type == "JSON":
-            text_content = json.dumps(json.loads(input_data))
-        elif format_type == "Email":
-            text_content = input_data
-        else:
-            raise ValueError("Unsupported format")
+    def process_input(self, content):
+        """Process input to classify format and intent."""
+        thread_id = str(uuid.uuid4())
+        format_type = self.classify_format(content)
+        intent = self.classify_intent(content)
 
-        intent = self.classify_intent(text_content)
-        thread_id = self.memory.save_context(format_type, intent, {"raw_text": text_content})
-
+        self.memory.save_context(format_type, intent, {"content": content[:1000]})
         return {
             "thread_id": thread_id,
             "format": format_type,
             "intent": intent,
-            "text_content": text_content
+            "text_content": content
         }

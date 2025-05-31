@@ -1,6 +1,3 @@
 From: customer@example.com
 Subject: Request for Quotation
-Dear Team,
-We need a quote for 100 units of Product X. Please respond urgently.
-Best,
-Customer
+Hi, please provide a quote for 100 units of Product X. This is urgent.

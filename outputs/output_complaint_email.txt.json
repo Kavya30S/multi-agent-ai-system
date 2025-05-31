@@ -1,0 +1,11 @@
+{
+    "thread_id": "dcea2655-8378-42c6-a060-254e49e36a51",
+    "format": "Email",
+    "intent": "Regulation",
+    "extracted_fields": {
+        "sender": "support@clientcorp.com\r",
+        "subject": "Issue with Recent Order Delivery\r",
+        "urgency": "High",
+        "intent": "Regulation"
+    }
+}

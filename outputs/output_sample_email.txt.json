@@ -1,10 +1,10 @@
 {
-    "thread_id": "64232ec8-87a2-4894-9b11-c568bbe25b72",
+    "thread_id": "6a50baf8-44ed-4696-8eff-040ec498eb38",
     "format": "Email",
     "intent": "RFQ",
     "extracted_fields": {
-        "sender": "customer@example.com",
-        "subject": "Request for Quotation",
+        "sender": "customer@example.com\r",
+        "subject": "Request for Quotation\r",
         "urgency": "High",
         "intent": "RFQ"
     }

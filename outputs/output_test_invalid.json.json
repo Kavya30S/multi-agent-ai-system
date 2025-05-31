@@ -1,0 +1,12 @@
+{
+    "thread_id": "cb8fd1b7-94c7-4da2-8233-de77e826926f",
+    "format": "JSON",
+    "intent": "Complaint",
+    "extracted_fields": {},
+    "anomalies": [
+        "Missing field: invoice_number",
+        "Missing field: amount",
+        "Missing field: date",
+        "Missing field: sender"
+    ]
+}

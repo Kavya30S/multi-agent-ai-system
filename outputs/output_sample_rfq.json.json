@@ -1,7 +1,7 @@
 {
-    "thread_id": "81c73edf-567e-4dfe-9d29-7257ca5c6a95",
+    "thread_id": "fb65c002-3266-4a34-9ba3-02ea04905ea1",
     "format": "JSON",
-    "intent": "Complaint",
+    "intent": "Invoice",
     "extracted_fields": {
         "invoice_number": "INV123",
         "amount": 5000.0,

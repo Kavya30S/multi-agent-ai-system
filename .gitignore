@@ -13,10 +13,7 @@
 
  # Project-specific
  memory/memory.db
- outputs/*
- *.pdf
- demo.mp4
-
+ 
  # Environment
  .env
  venv/
