@@ -3,6 +3,7 @@
 This project is a Streamlit-based multi-agent AI system that processes uploaded files (`.txt`, `.json`, `.pdf`), classifies their format (`Email`, `JSON`, `PDF`) and intent (`Invoice`, `RFQ`, `Complaint`, `Regulation`), and extracts relevant fields. It uses a local BERT model (`distilbert-base-uncased-finetuned-sst-2-english`) with a keyword-based heuristic for intent classification, requiring no external API. Results are stored in a SQLite database (`memory/memory.db`) and as JSON files in `outputs/`. The app runs locally via Streamlit and is synced with GitHub.
 
 **GitHub Repository**: github.com/Kavya30S/multi-agent-ai-system
+**Live Video Demo Google Drive**:https://drive.google.com/file/d/1OT90A7PU24iwxtaD7q9ZY2XKLs4nRWER/view?usp=drivesdk
 
 ## **Table of Contents**
 
