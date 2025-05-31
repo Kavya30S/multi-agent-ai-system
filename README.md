@@ -291,4 +291,8 @@ Solutions for common issues.
 
 - Ensure port 8501 is free:
 
+<<<<<<< HEAD
   # 
+=======
+  # 
+>>>>>>> cc67894aad38c7eec6b88e04cb5bd5ad30f20d7c
